@@ -1,4 +1,4 @@
-// src/routes/SignupPage.js
+// src/routes/SignupPage.jsx
 import React, { useState } from "react";
 import {
   SignupContainer,
