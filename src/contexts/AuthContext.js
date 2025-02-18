@@ -3,64 +3,54 @@ import axios from "axios";
 
 export const AuthContext = createContext();
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
   const [accessToken, setAccessToken] = useState(null);
   const [refreshToken, setRefreshToken] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    try {
-      const storedAccessToken = localStorage.getItem("accessToken");
-      const storedRefreshToken = localStorage.getItem("refreshToken");
-      const storedUser = localStorage.getItem("user");
+    // ✅ 앱이 로드될 때 저장된 토큰을 불러옴
+    const storedAccessToken = localStorage.getItem("accessToken");
+    const storedRefreshToken = localStorage.getItem("refreshToken");
+   
 
-      if (storedAccessToken && storedRefreshToken && storedUser) {
-        setAccessToken(storedAccessToken);
-        setRefreshToken(storedRefreshToken);
-        setUser(JSON.parse(storedUser));
-      }
-    } catch (error) {
-      console.error("Error parsing user data:", error);
-      localStorage.clear();
+    if (storedAccessToken && storedRefreshToken) {
+      setAccessToken(storedAccessToken);
+      setRefreshToken(storedRefreshToken);
+      
+      setIsAuthenticated(true);
     }
   }, []);
 
-  const login = (accessToken, refreshToken, userData) => {
-    setAccessToken(accessToken);
-    setRefreshToken(refreshToken);
-    setUser(userData);
+  // ✅ 로그인 함수
+  const login = (newAccessToken, newRefreshToken) => {
+    setAccessToken(newAccessToken);
+    setRefreshToken(newRefreshToken);
 
-    localStorage.setItem("accessToken", accessToken);
-    localStorage.setItem("refreshToken", refreshToken);
-    localStorage.setItem("user", JSON.stringify(userData));
+    setIsAuthenticated(true);
+
+    localStorage.setItem("accessToken", newAccessToken);
+    localStorage.setItem("refreshToken", newRefreshToken);
+   
   };
 
+  // ✅ 로그아웃 함수
   const logout = () => {
     setAccessToken(null);
     setRefreshToken(null);
-    setUser(null);
+    
+    setIsAuthenticated(false);
 
-    localStorage.clear();
-    window.location.reload(); // 🔄 로그아웃 후 UI 업데이트
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    
+    window.location.href = "/login"; // 로그인 페이지로 이동
   };
 
-  // 🔹 API 요청 시 자동으로 Access Token 포함
-  const authAxios = axios.create({
-    baseURL: process.env.REACT_APP_API_BASE_URL,
-  });
-
-  authAxios.interceptors.request.use(
-    (config) => {
-      if (accessToken) {
-        config.headers.Authorization = `Bearer ${accessToken}`;
-      }
-      return config;
-    },
-    (error) => Promise.reject(error)
-  );
-
   return (
-    <AuthContext.Provider value={{ user, accessToken, refreshToken, login, logout, authAxios }}>
+    <AuthContext.Provider value={{  accessToken, refreshToken, isAuthenticated, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

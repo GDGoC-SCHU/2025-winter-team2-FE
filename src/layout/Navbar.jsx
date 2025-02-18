@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   Navgation,
@@ -9,10 +9,13 @@ import { StyledButton } from "../styles/Button";
 import { AuthContext } from "../contexts/AuthContext"; // 🔹 AuthContext 가져오기
 
 function NavBar() {
-  const { user, logout } = useContext(AuthContext); // 🔹 로그인 상태 및 로그아웃 함수 가져오기
-  const [click, setClick] = useState(false);
+  const { isAuthenticated, logout } = useContext(AuthContext);
+  const [authState, setAuthState] = useState(isAuthenticated); // 상태 동기화
 
-  const handleClick = () => setClick(!click);
+  // ✅ 로그인 상태가 변경될 때 UI 업데이트
+  useEffect(() => {
+    setAuthState(isAuthenticated);
+  }, [isAuthenticated]);
 
   return (
     <Navgation>
@@ -22,7 +25,7 @@ function NavBar() {
         </Link>
 
         <ButtonContainer>
-          {user ? ( // 🔹 로그인된 경우
+          {authState ? ( // 🔹 로그인된 경우
             <>
               <Link
                 to="/profile"

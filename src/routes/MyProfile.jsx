@@ -1,39 +1,45 @@
-import React, { useState, useEffect } from "react";
-import { getUserProfile } from "../api/userApi";
+import React, { useState, useEffect, useContext } from "react";
+import { AuthContext } from "../contexts/AuthContext";
+import { fetchUserProfile } from "../api/profileApi";
 
 const MyProfile = () => {
-  const [userProfile, setUserProfile] = useState(null);
+  const { isAuthenticated } = useContext(AuthContext);
+  const [profile, setProfile] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchProfile = async () => {
+    if (!isAuthenticated) {
+      setError("로그인이 필요합니다.");
+      return;
+    }
+
+    const getUserProfile = async () => {
       try {
-        const profileData = await getUserProfile();
-        setUserProfile(profileData);
+        const userData = await fetchUserProfile();
+        setProfile(userData);
       } catch (error) {
-        console.error("프로필 불러오기 실패:", error);
-        setError("프로필 정보를 불러오는 데 실패했습니다.");
+        setError(error.message);
       }
     };
-    fetchProfile();
-  }, []);
+
+    getUserProfile();
+  }, [isAuthenticated]);
 
   if (error) {
     return <p style={{ color: "red" }}>{error}</p>;
   }
 
+  if (!profile) {
+    return <p>프로필 정보를 불러오는 중...</p>;
+  }
+
   return (
     <div>
       <h2>내 프로필</h2>
-      {userProfile ? (
-        <div>
-          <p>이메일: {userProfile.email}</p>
-          <p>출생 연도: {userProfile.birthYear}</p>
-          <p>성별: {userProfile.gender}</p>
-        </div>
-      ) : (
-        <p>프로필 정보를 불러오는 중...</p>
-      )}
+      <p><strong>이메일:</strong> {profile.email}</p>
+      <p><strong>이름:</strong> {profile.name}</p>
+      <p><strong>생년월일:</strong> {profile.birthYear}</p>
+      <p><strong>성별:</strong> {profile.gender}</p>
     </div>
   );
 };

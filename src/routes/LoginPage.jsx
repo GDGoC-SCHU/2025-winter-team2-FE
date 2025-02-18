@@ -14,33 +14,21 @@ import { loginUser } from "../api/loginApi"; // 🔹 로그인 API 호출
 
 const LoginPage = () => {
   const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
 
-  const handleLoginClick = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      // 🔹 API 호출 → Access Token, Refresh Token, User 정보 가져오기
-      const { accessToken, refreshToken, user } = await loginUser({ email, password });
-      console.log("✅ 로그인 성공:", { accessToken, refreshToken, user });
+      const { accessToken, refreshToken } = await loginUser({ email, password });
 
-      // 🔹 AuthContext에 로그인 정보 저장
-      login(accessToken, refreshToken, user);
-
-      // 🔹 로컬스토리지에 저장 (새로고침해도 유지됨)
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
-      localStorage.setItem("user", JSON.stringify(user));
-
-      // 🔹 로그인 후 홈으로 이동
-      navigate("/");
-
+      login(accessToken, refreshToken); // ✅ 로그인 상태 업데이트
+      navigate("/"); // 로그인 성공 후 홈으로 이동
     } catch (error) {
-      console.error("❌ 로그인 실패:", error);
-      setError(error.message || "로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.");
+      setError("로그인 실패: 이메일 또는 비밀번호를 확인하세요.");
     }
   };
 
@@ -48,7 +36,7 @@ const LoginPage = () => {
     <LoginContainer>
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "40px" }}>
         <Title>로그인</Title>
-        <Form onSubmit={handleLoginClick}>
+        <Form onSubmit={handleLogin}>
           <div>
             <Input
               type="email"

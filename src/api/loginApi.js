@@ -1,3 +1,4 @@
+import { authAxios } from "./authAxios";
 import axios from "axios";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -10,7 +11,7 @@ export const loginUser = async (userData) => {
       headers: { "Content-Type": "application/json" },
     });
 
-    console.log("📌 로그인 API 응답:", response.data); // 🔍 응답 데이터 확인
+    console.log("📌 로그인 API 응답:", response.data);
 
     let accessToken, refreshToken;
 
@@ -40,12 +41,12 @@ export const loginUser = async (userData) => {
       throw new Error("❌ 알 수 없는 응답 형식입니다.");
     }
 
-    console.log("✅ 추출된 Access Token:", accessToken);
-    console.log("✅ 추출된 Refresh Token:", refreshToken);
-
     // ✅ 토큰을 localStorage에 저장
     localStorage.setItem("accessToken", accessToken);
     localStorage.setItem("refreshToken", refreshToken);
+
+    // ✅ authAxios에 토큰 설정 (Authorization 헤더에 자동 추가됨)
+    authAxios.defaults.headers.Authorization = `Bearer ${accessToken}`;
 
     return { accessToken, refreshToken };
   } catch (error) {
