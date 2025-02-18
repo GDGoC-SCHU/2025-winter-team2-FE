@@ -8,10 +8,9 @@ import {
   DateText,
   Input,
   InputBox,
-  IconWrapper,
   ButtonContainer,
   Button
-} from "../styles/TripPlanner";  // 🔹 Label 삭제 (여기에 없으면 import 안함)
+} from "../styles/TripPlanner"; 
 
 const TripPlanner = () => {
   const navigate = useNavigate();
@@ -21,8 +20,7 @@ const TripPlanner = () => {
   const [inputs, setInputs] = useState([
     { id: 1, label: "📍 장소", placeholder: "여행 가능한 장소 입력", value: "" },
     { id: 2, label: "🎯 여행 목적", placeholder: "ex) 가족 여행, 힐링 여행...", value: "" },
-    { id: 3, label: "🚗 교통", placeholder: "ex) 기차, 비행기, 자차...", value: "" },
-    { id: 4, label: "🏨 숙소", placeholder: "이용 중 숙박 입력", value: "" },
+    { id: 3, label: "🌟 선호", placeholder: "ex) 감성 카페, 맛집 투어, 액티비티...", value: "" },
   ]);
 
   const handleDateChange = (dates) => {
@@ -39,8 +37,7 @@ const TripPlanner = () => {
     const tripDetails = {
       title: "추천된 여행 일정",
       date: `${startDate.toLocaleDateString()} - ${endDate.toLocaleDateString()}`,
-      transport: inputs.find(input => input.label.includes("교통"))?.value || "자차",
-      cost: "약 65,200원",
+      preference: inputs.find(input => input.label.includes("선호"))?.value || "감성 카페",
       places: [
         { name: inputs[0].value || "도두동 무지개해안도로", description: "₩0원", distance: "12.2KM / 약 25분" },
         { name: "시소 카이막 애월점", description: "대표 시소 카이막 ₩13,000", distance: "9.81KM / 약 21분" },
@@ -73,7 +70,7 @@ const TripPlanner = () => {
 
       {inputs.map((input) => (
         <InputBox key={input.id}>
-          <label>{input.label}</label> {/* ✅ 라벨을 일반 `<label>`로 변경 */}
+          <label>{input.label}</label> 
           <Input 
             placeholder={input.placeholder} 
             value={input.value} 

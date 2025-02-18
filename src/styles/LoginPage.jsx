@@ -51,8 +51,10 @@ export const LoginButton = styled.button`
   padding: 10px;
   font-size: 1rem;
   cursor: pointer;
+  
   font-size: 1.5rem;
-
+  display: block; 
+  margin: 20px auto;
   &:hover {
     background: #339af0;
   }
@@ -61,19 +63,4 @@ export const LoginButton = styled.button`
   }
 `;
 
-export const SocialLoginContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  text-align: center;
-  margin-top: 20px;
-`;
 
-export const SocialButton = styled.button`
-  display: inline-block;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  margin-right: 10px;
-  cursor: pointer;
-`;

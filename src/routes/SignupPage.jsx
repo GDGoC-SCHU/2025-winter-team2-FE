@@ -1,5 +1,8 @@
-// src/routes/SignupPage.jsx
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { signupUser } from "../api/signupApi";
+import { loginUser } from "../api/loginApi"; // 🔹 로그인 API 호출
+import { AuthContext } from "../contexts/AuthContext"; // 🔹 AuthContext 추가
 import {
   SignupContainer,
   Title,
@@ -10,33 +13,77 @@ import {
 } from "../styles/SignupPage";
 
 const SignupPage = () => {
-  const [username, setUsername] = useState("");
+  const { login } = useContext(AuthContext); // 🔹 로그인 상태 관리
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [birthDate, setBirthDate] = useState("");
+  const [birthYear, setBirthYear] = useState("");
   const [gender, setGender] = useState("");
+  const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // 회원가입 로직 추가
-    console.log("아이디:", username);
-    console.log("비밀번호:", password);
-    console.log("생년월일:", birthDate);
-    console.log("성별:", gender);
+  
+    if (password !== confirmPassword) {
+      setError("비밀번호가 일치하지 않습니다.");
+      return;
+    }
+  
+    const userData = {
+      email,
+      password,
+      confirmPassword,
+      birthYear,
+      gender,
+    };
+  
+    console.log("📌 전송할 회원가입 데이터:", userData);
+  
+    try {
+      // 🔹 회원가입 API 호출
+      const signupResponse = await signupUser(userData);
+      console.log("✅ 회원가입 성공:", signupResponse);
+  
+      setSuccessMessage("회원가입이 성공적으로 완료되었습니다!");
+      setError(null);
+  
+      // 🔹 회원가입이 완료되면 로그인 API 호출
+      console.log("📌 자동 로그인 시도...");
+      const loginResponse = await loginUser({ email, password });
+      console.log("✅ 자동 로그인 성공:", loginResponse);
+  
+      const { accessToken, refreshToken, user } = loginResponse;
+  
+      // 🔹 로그인 정보 저장
+      login(accessToken, refreshToken, user);
+  
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+      localStorage.setItem("user", JSON.stringify(user));
+  
+      // 🔹 로그인 후 홈으로 이동
+      navigate("/");
+    } catch (error) {
+      console.error("❌ 회원가입 또는 로그인 실패:", error.response?.data || error.message);
+      setError(error.response?.data?.message || "회원가입 후 로그인에 실패했습니다.");
+    }
   };
+  
 
   return (
     <SignupContainer>
       <div>
         <Title>회원가입</Title>
         <Form onSubmit={handleSubmit}>
-          <Label htmlFor="username">아이디</Label>
+          <Label htmlFor="email">이메일</Label>
           <Input
-            type="text"
-            id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="아이디"
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="이메일"
             required
           />
 
@@ -60,13 +107,13 @@ const SignupPage = () => {
             required
           />
 
-          <Label htmlFor="birthDate">생년월일</Label>
+          <Label htmlFor="birthYear">출생 연도</Label>
           <Input
             type="text"
-            id="birthDate"
-            value={birthDate}
-            onChange={(e) => setBirthDate(e.target.value)}
-            placeholder="ex) 20xx.xx.xx"
+            id="birthYear"
+            value={birthYear}
+            onChange={(e) => setBirthYear(e.target.value)}
+            placeholder="ex) 1990"
             required
           />
 
@@ -79,6 +126,9 @@ const SignupPage = () => {
             placeholder="남성, 여성"
             required
           />
+
+          {error && <p style={{ color: "red" }}>{error}</p>}
+          {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
 
           <SubmitButton type="submit">가입</SubmitButton>
         </Form>
