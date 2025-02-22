@@ -1,49 +1,45 @@
 import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import{
-    Container,
-    Title,
-    TripCard,
-    InfoBox,
-    MapImage,
-    Button,
-
-} from "../styles/RecommendedTrip";
+import { useLocation } from "react-router-dom";
+import { Container, Title, DayCard, DayTitle, SpotList, SpotItem, Links } from "../styles/RecommendedTrip";
 
 const RecommendedTrip = () => {
   const location = useLocation();
-  const navigate = useNavigate();
+  const { itineraryData } = location.state || {};
 
-  const { tripDetails } = location.state || {}; // TripPlanner에서 전달된 데이터
+  // ✅ 데이터가 없을 경우 로딩 상태 표시
+  if (!itineraryData) {
+    return <p>📌 추천된 여행 일정이 없습니다.</p>;
+  }
+
+  // ✅ `travelPlanDays`가 없는 경우 예외 처리
+  if (!itineraryData.travelPlanDays || itineraryData.travelPlanDays.length === 0) {
+    return <p>📌 여행 일정 데이터가 없습니다.</p>;
+  }
 
   return (
     <Container>
-      <Title>{tripDetails?.title || "추천 여행"}</Title>
-      <p>{tripDetails?.date || "1일차 일정"}</p>
+      <Title>추천된 여행 일정 - {itineraryData?.location || "알 수 없음"}</Title>
 
-      {/* 여행지 리스트 */}
-      {tripDetails?.places?.map((place, index) => (
-        <TripCard key={index}>
-          <div>
-            <h3>{place.name}</h3>
-            <p>{place.description}</p>
-          </div>
-          <p>{place.distance}</p>
-        </TripCard>
+      {itineraryData?.travelPlanDays?.map((day, index) => (
+        <DayCard key={index}>
+          <DayTitle>Day {day?.dayIndex || index + 1}</DayTitle>
+          <SpotList>
+            {day?.planSpots?.map((spot, i) => (
+              <SpotItem key={i}>
+                <strong>{spot?.name || "알 수 없는 장소"}</strong> - {spot?.category || "카테고리 없음"}
+                <Links>
+                  {spot?.naver_map_url && (
+                    <a href={spot.naver_map_url} target="_blank" rel="noopener noreferrer">네이버 지도</a>
+                  )}
+                  {spot?.google_search_url && (
+                    <a href={spot.google_search_url} target="_blank" rel="noopener noreferrer">구글 검색</a>
+                  )}
+                </Links>
+              </SpotItem>
+            ))}
+          </SpotList>
+        </DayCard>
       ))}
-
-      {/* 여행 정보 박스 */}
-      <InfoBox>
-        <h3>1일차 일정</h3>
-        <p>예상 소요 금액: {tripDetails?.cost || "약 65,200원"}</p>
-        <p>추천 장소: {tripDetails?.places.length || 3}곳</p>
-        <p>이동 수단: {tripDetails?.transport || "자차"}</p>
-      </InfoBox>
-
-      {/* 지도 표시 */}
-      <MapImage src="/assets/sample-map.png" alt="지도 이미지" />
-
-      <Button onClick={() => navigate("/")}>홈으로</Button>
     </Container>
   );
 };

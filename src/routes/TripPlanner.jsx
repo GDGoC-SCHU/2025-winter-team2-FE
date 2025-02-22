@@ -11,16 +11,18 @@ import {
   ButtonContainer,
   Button
 } from "../styles/TripPlanner"; 
+import { fetchItinerary } from "../api/recommendApi"; // ✅ API 호출 함수 추가
 
 const TripPlanner = () => {
   const navigate = useNavigate();
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [showCalendar, setShowCalendar] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [inputs, setInputs] = useState([
-    { id: 1, label: "📍 장소", placeholder: "여행 가능한 장소 입력", value: "" },
-    { id: 2, label: "🎯 여행 목적", placeholder: "ex) 가족 여행, 힐링 여행...", value: "" },
-    { id: 3, label: "🌟 선호", placeholder: "ex) 감성 카페, 맛집 투어, 액티비티...", value: "" },
+    { id: 1, label: "📍 장소", placeholder: "여행할 도시를 입력하세요", value: "" },
+    { id: 2, label: "🌟 선호", placeholder: "ex) 감성 카페, 맛집 투어, 액티비티...", value: "" },
   ]);
 
   const handleDateChange = (dates) => {
@@ -33,19 +35,33 @@ const TripPlanner = () => {
     setInputs(inputs.map(input => (input.id === id ? { ...input, value } : input)));
   };
 
-  const handleRecommendClick = () => {
-    const tripDetails = {
-      title: "추천된 여행 일정",
-      date: `${startDate.toLocaleDateString()} - ${endDate.toLocaleDateString()}`,
-      preference: inputs.find(input => input.label.includes("선호"))?.value || "감성 카페",
-      places: [
-        { name: inputs[0].value || "도두동 무지개해안도로", description: "₩0원", distance: "12.2KM / 약 25분" },
-        { name: "시소 카이막 애월점", description: "대표 시소 카이막 ₩13,000", distance: "9.81KM / 약 21분" },
-        { name: "9.81 파크", description: "홈페이지(1인) ₩52,500원", distance: "13.2KM / 약 21분" },
-      ],
-    };
+  // ✅ AI 여행 일정 요청 함수
+  const handleGenerateItinerary = async () => {
+    setLoading(true);
+    setError(null);
 
-    navigate("/recommended", { state: { tripDetails } });
+    const location = inputs.find(input => input.label.includes("장소"))?.value;
+    const theme = inputs.find(input => input.label.includes("선호"))?.value;
+
+    if (!location || !theme) {
+      setError("📌 장소 및 선호도를 입력해주세요.");
+      setLoading(false);
+      return;
+    }
+
+    // 여행 일수 계산 (종료 날짜 - 시작 날짜)
+    const days = Math.max(1, Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)));
+
+    try {
+      const itineraryData = await fetchItinerary({ location, days, theme });
+
+      // ✅ AI가 생성한 여행 일정을 `RecommendedPage`로 이동하면서 전달
+      navigate("/recommended", { state: { itineraryData } });
+    } catch (error) {
+      setError(error.message || "일정 생성에 실패했습니다.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -79,9 +95,13 @@ const TripPlanner = () => {
         </InputBox>
       ))}
 
+      {error && <p style={{ color: "red" }}>{error}</p>}
+
       <ButtonContainer>
         <Button onClick={() => setShowCalendar(true)}>일정 선택</Button>
-        <Button onClick={handleRecommendClick}>추천 받기</Button>
+        <Button onClick={handleGenerateItinerary} disabled={loading}>
+          {loading ? "일정 생성 중..." : "추천 받기"}
+        </Button>
       </ButtonContainer>
     </Container>
   );
