@@ -41,11 +41,11 @@ export const loginUser = async (userData) => {
       throw new Error("❌ 알 수 없는 응답 형식입니다.");
     }
 
-    // ✅ 토큰을 localStorage에 저장
+    //토큰을 localStorage에 저장
     localStorage.setItem("accessToken", accessToken);
     localStorage.setItem("refreshToken", refreshToken);
 
-    // ✅ authAxios에 토큰 설정 (Authorization 헤더에 자동 추가됨)
+    //authAxios에 토큰 설정 (Authorization 헤더에 자동 추가됨)
     authAxios.defaults.headers.Authorization = `Bearer ${accessToken}`;
 
     return { accessToken, refreshToken };

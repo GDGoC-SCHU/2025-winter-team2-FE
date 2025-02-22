@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    // ✅ 앱이 로드될 때 저장된 토큰을 불러옴
+    //앱이 로드될 때 저장된 토큰을 불러옴
     const storedAccessToken = localStorage.getItem("accessToken");
     const storedRefreshToken = localStorage.getItem("refreshToken");
    
@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // ✅ 로그인 함수
+  //로그인 함수
   const login = (newAccessToken, newRefreshToken) => {
     setAccessToken(newAccessToken);
     setRefreshToken(newRefreshToken);
@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }) => {
    
   };
 
-  // ✅ 로그아웃 함수
+  //로그아웃 함수
   const logout = () => {
     setAccessToken(null);
     setRefreshToken(null);

@@ -9,8 +9,8 @@ import {
   Hr,
 } from "../styles/LoginPage";
 import SignupButton from "../components/SignupButton";
-import { AuthContext } from "../contexts/AuthContext"; // 🔹 AuthContext 불러오기
-import { loginUser } from "../api/loginApi"; // 🔹 로그인 API 호출
+import { AuthContext } from "../contexts/AuthContext"; 
+import { loginUser } from "../api/loginApi"; 
 
 const LoginPage = () => {
   const { login } = useContext(AuthContext);
@@ -25,8 +25,8 @@ const LoginPage = () => {
     try {
       const { accessToken, refreshToken } = await loginUser({ email, password });
 
-      login(accessToken, refreshToken); // ✅ 로그인 상태 업데이트
-      navigate("/"); // 로그인 성공 후 홈으로 이동
+      login(accessToken, refreshToken); 
+      navigate("/"); 
     } catch (error) {
       setError("로그인 실패: 이메일 또는 비밀번호를 확인하세요.");
     }

@@ -42,28 +42,28 @@ const SignupPage = () => {
     console.log("📌 전송할 회원가입 데이터:", userData);
   
     try {
-      // 🔹 회원가입 API 호출
+      //회원가입 API 호출
       const signupResponse = await signupUser(userData);
       console.log("✅ 회원가입 성공:", signupResponse);
   
       setSuccessMessage("회원가입이 성공적으로 완료되었습니다!");
       setError(null);
   
-      // 🔹 회원가입이 완료되면 로그인 API 호출
+      //회원가입이 완료되면 로그인 API 호출
       console.log("📌 자동 로그인 시도...");
       const loginResponse = await loginUser({ email, password });
       console.log("✅ 자동 로그인 성공:", loginResponse);
   
       const { accessToken, refreshToken, user } = loginResponse;
   
-      // 🔹 로그인 정보 저장
+      //로그인 정보 저장
       login(accessToken, refreshToken, user);
   
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
       localStorage.setItem("user", JSON.stringify(user));
   
-      // 🔹 로그인 후 홈으로 이동
+      // 로그인 후 홈으로 이동
       navigate("/");
     } catch (error) {
       console.error("❌ 회원가입 또는 로그인 실패:", error.response?.data || error.message);

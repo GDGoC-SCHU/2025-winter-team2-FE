@@ -6,13 +6,13 @@ import {
   ButtonContainer,
 } from "../styles/Navgation";
 import { StyledButton } from "../styles/Button";
-import { AuthContext } from "../contexts/AuthContext"; // 🔹 AuthContext 가져오기
+import { AuthContext } from "../contexts/AuthContext"; 
 
 function NavBar() {
   const { isAuthenticated, logout } = useContext(AuthContext);
   const [authState, setAuthState] = useState(isAuthenticated); // 상태 동기화
 
-  // ✅ 로그인 상태가 변경될 때 UI 업데이트
+  //로그인 상태가 변경될 때 UI 업데이트
   useEffect(() => {
     setAuthState(isAuthenticated);
   }, [isAuthenticated]);
@@ -25,7 +25,7 @@ function NavBar() {
         </Link>
 
         <ButtonContainer>
-          {authState ? ( // 🔹 로그인된 경우
+          {authState ? ( //로그인된 경우
             <>
               <Link
                 to="/profile"
@@ -35,7 +35,7 @@ function NavBar() {
               </Link>
               <StyledButton onClick={logout}>LOGOUT</StyledButton>
             </>
-          ) : ( // 🔹 로그인되지 않은 경우
+          ) : ( //로그인되지 않은 경우
             <Link
               to="/login"
               style={{ textDecoration: "none", color: "inherit" }}

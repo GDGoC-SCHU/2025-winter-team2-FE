@@ -11,7 +11,7 @@ import {
   ButtonContainer,
   Button
 } from "../styles/TripPlanner"; 
-import { fetchItinerary } from "../api/recommendApi"; // ✅ API 호출 함수 추가
+import { fetchItinerary } from "../api/recommendApi"; 
 
 const TripPlanner = () => {
   const navigate = useNavigate();
@@ -35,7 +35,7 @@ const TripPlanner = () => {
     setInputs(inputs.map(input => (input.id === id ? { ...input, value } : input)));
   };
 
-  // ✅ AI 여행 일정 요청 함수
+  //AI 여행 일정 요청 함수
   const handleGenerateItinerary = async () => {
     setLoading(true);
     setError(null);
@@ -55,7 +55,6 @@ const TripPlanner = () => {
     try {
       const itineraryData = await fetchItinerary({ location, days, theme });
 
-      // ✅ AI가 생성한 여행 일정을 `RecommendedPage`로 이동하면서 전달
       navigate("/recommended", { state: { itineraryData } });
     } catch (error) {
       setError(error.message || "일정 생성에 실패했습니다.");

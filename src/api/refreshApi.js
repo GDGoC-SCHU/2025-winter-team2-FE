@@ -21,7 +21,7 @@ export const refreshAccessToken = async () => {
       throw new Error("❌ 새 Access Token을 받을 수 없습니다.");
     }
 
-    // ✅ 새 Access Token 저장
+    //새 Access Token 저장
     localStorage.setItem("accessToken", newAccessToken);
     return newAccessToken;
   } catch (error) {

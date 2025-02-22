@@ -8,9 +8,9 @@ export const signupUser = async (userData) => {
       headers: { "Content-Type": "application/json" },
     });
 
-    console.log("📌 회원가입 API 응답:", response.data); // 🔍 응답 확인
+    console.log("📌 회원가입 API 응답:", response.data); 
 
-    return response.data; // ✅ 응답 데이터 반환
+    return response.data; //응답 데이터 반환
   } catch (error) {
     console.error("❌ 회원가입 실패:", error.response?.data || error.message);
     throw error.response?.data || { message: "회원가입 실패" };

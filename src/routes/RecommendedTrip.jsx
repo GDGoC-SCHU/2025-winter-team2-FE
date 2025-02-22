@@ -6,12 +6,12 @@ const RecommendedTrip = () => {
   const location = useLocation();
   const { itineraryData } = location.state || {};
 
-  // ✅ 데이터가 없을 경우 로딩 상태 표시
+  //데이터가 없을 경우 로딩 상태 표시
   if (!itineraryData) {
     return <p>📌 추천된 여행 일정이 없습니다.</p>;
   }
 
-  // ✅ `travelPlanDays`가 없는 경우 예외 처리
+  //예외 처리
   if (!itineraryData.travelPlanDays || itineraryData.travelPlanDays.length === 0) {
     return <p>📌 여행 일정 데이터가 없습니다.</p>;
   }

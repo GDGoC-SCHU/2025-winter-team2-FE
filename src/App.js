@@ -11,9 +11,9 @@ import MyProfile from "./routes/MyProfile";
 
 function App() {
   return (
-    <AuthProvider> {/* 🔹 AuthProvider는 Router 바깥에서 상태 유지 */}
+    <AuthProvider> {}
       <Router>
-        <NavBar /> {/* 🔹 로그인 상태 반영을 위해 Router 안에서 배치 */}
+        <NavBar /> {}
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />

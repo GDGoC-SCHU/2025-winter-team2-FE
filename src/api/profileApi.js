@@ -2,7 +2,7 @@ import axios from "axios";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-// ✅ 프로필 정보 가져오기
+//프로필 정보 가져오기
 export const fetchUserProfile = async () => {
   try {
     const accessToken = localStorage.getItem("accessToken");
