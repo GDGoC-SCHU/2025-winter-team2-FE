@@ -37,8 +37,8 @@ const MyProfile = () => {
     <div>
       <h2>내 프로필</h2>
       <p><strong>이메일:</strong> {profile.email}</p>
-      <p><strong>이름:</strong> {profile.name}</p>
-      <p><strong>생년월일:</strong> {profile.birthYear}</p>
+     
+      <p><strong>생년월일:</strong> {profile.birthDate}</p>
       <p><strong>성별:</strong> {profile.gender}</p>
     </div>
   );
